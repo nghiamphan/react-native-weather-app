@@ -1,7 +1,7 @@
 {
     "expo": {
-        "name": "weather-mobile-app",
-        "slug": "weather-mobile-app",
+        "name": "weather-react-native-app",
+        "slug": "weather-react-native-app",
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
