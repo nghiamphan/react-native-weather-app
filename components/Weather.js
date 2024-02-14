@@ -7,21 +7,23 @@ import { addCity, getAllCities, getCityByName } from '../db/sqlite'
 const Weather = ({ weatherData }) => {
     const [saved, setSaved] = useState(false)
 
-    if (!weatherData) {
-        return <View></View>
-    }
-
     useFocusEffect(() => {
         const checkCityExist = async () => {
-            const city = await getCityByName(weatherData.locationName)
-            if (city) {
-                setSaved(true)
-            } else {
-                setSaved(false)
+            if (weatherData) {
+                const city = await getCityByName(weatherData.locationName)
+                if (city) {
+                    setSaved(true)
+                } else {
+                    setSaved(false)
+                }
             }
         }
         checkCityExist()
     })
+
+    if (!weatherData) {
+        return <View></View>
+    }
 
     const onAddLocation = async (weatherData) => {
         const cities = await getAllCities()

@@ -1,49 +1,16 @@
-import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Pressable } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import * as Location from 'expo-location'
 
-import Weather from './components/Weather'
-import weatherService from './services/weather'
+import HomeScreen from './components/HomeScreen'
 import CityLookupScreen from './components/CityLookupScreen'
 import SavedCityListScreen from './components/SavedCityListScreen'
-import { createTable } from './db/sqlite'
 
 const Stack = createNativeStackNavigator()
 
 export default function App() {
-    const [weatherData, setWeatherData] = useState(null)
-
-    useEffect(() => {
-        const askLocationPermission = async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync()
-            if (status !== 'granted') {
-                alert('Permission to access location was denied')
-                return
-            }
-
-            const geocoding = await Location.getCurrentPositionAsync({})
-            const data = await weatherService.fetchWeather(
-                geocoding.coords.latitude,
-                geocoding.coords.longitude
-            )
-            setWeatherData(data)
-        }
-
-        askLocationPermission()
-    }, [])
-
-    useEffect(() => {
-        createTable()
-    }, [])
-
-    const HomeScreen = (props) => {
-        return <Weather {...props} weatherData={weatherData} />
-    }
-
     const CityLookupNavigation = (navigation) => (
         <Pressable onPress={() => navigation.navigate('CityLookupScreen')}>
             <Icon name="search" size={25} />
