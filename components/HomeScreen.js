@@ -5,8 +5,13 @@ import Weather from './Weather'
 import weatherService from '../services/weather'
 import { createTable } from '../db/sqlite'
 
-const HomeScreen = () => {
-    const [weatherData, setWeatherData] = useState(null)
+const HomeScreen = ({ route, navigation }) => {
+    const initialWeatherData = route.params?.initialWeatherData
+    const [weatherData, setWeatherData] = useState(initialWeatherData)
+
+    if (weatherData !== initialWeatherData && initialWeatherData !== undefined) {
+        setWeatherData(initialWeatherData)
+    }
 
     useEffect(() => {
         const askLocationPermission = async () => {
@@ -24,8 +29,10 @@ const HomeScreen = () => {
             setWeatherData(data)
         }
 
-        askLocationPermission()
-    }, [])
+        if (!initialWeatherData) {
+            askLocationPermission()
+        }
+    }, [navigation])
 
     useEffect(() => {
         createTable()

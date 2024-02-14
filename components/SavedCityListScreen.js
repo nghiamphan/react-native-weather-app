@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
 import { Button, Divider, Text } from 'react-native-paper'
 
 import { getAllCities, removeCity } from '../db/sqlite'
@@ -13,6 +13,7 @@ const SavedCityListScreen = ({ navigation }) => {
             const cities = await getAllCities()
             const weatherDataPromises = cities.map(async (city) => {
                 const data = await weatherService.fetchWeather(city.latitude, city.longitude)
+                city.weather = data
                 city.weather_description = data.weather_description
                 city.temperature = data.current_weather.temperature
                 city.temperature_units = data.current_weather_units.temperature
@@ -26,6 +27,10 @@ const SavedCityListScreen = ({ navigation }) => {
         fetchCitiesAndWeather()
     }, [navigation])
 
+    const onDisplayCity = (city) => {
+        navigation.navigate('HomeScreen', { initialWeatherData: city.weather })
+    }
+
     const onRemoveLocation = (city) => {
         removeCity(city.id)
         setCities(cities.filter((c) => c.id !== city.id))
@@ -35,7 +40,7 @@ const SavedCityListScreen = ({ navigation }) => {
         <ScrollView>
             {cities.map((city) => {
                 return (
-                    <View key={city.id}>
+                    <Pressable key={city.id} onPress={() => onDisplayCity(city)}>
                         <View style={styles.list_item}>
                             <View style={[styles.column, styles.columnLeft]}>
                                 <Text variant="titleMedium">{city.name}</Text>
@@ -57,7 +62,7 @@ const SavedCityListScreen = ({ navigation }) => {
                             </View>
                         </View>
                         <Divider />
-                    </View>
+                    </Pressable>
                 )
             })}
         </ScrollView>
