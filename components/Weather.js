@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Image, View } from 'react-native'
+import { Alert, Image, View } from 'react-native'
 import { Button, Text } from 'react-native-paper'
 import { useFocusEffect } from '@react-navigation/core'
-import { addCity, getCityByName } from '../db/sqlite'
+import { addCity, getAllCities, getCityByName } from '../db/sqlite'
 
 const Weather = ({ weatherData }) => {
     const [saved, setSaved] = useState(false)
@@ -23,26 +23,14 @@ const Weather = ({ weatherData }) => {
         checkCityExist()
     })
 
-    const onAddLocation = (weatherData) => {
+    const onAddLocation = async (weatherData) => {
+        const cities = await getAllCities()
+        if (cities.length >= 4) {
+            Alert.alert('Error', 'You can only save up to 4 locations')
+            return
+        }
         addCity(weatherData)
         setSaved(true)
-        // const city = getCityByName(weatherData.locationName)
-        // db.transaction((tx) => {
-        //     tx.executeSql(
-        //         'SELECT * FROM cities WHERE name = ?',
-        //         [weatherData.locationName],
-        //         (tx, results) => {
-        //             if (results.rows.length === 0) {
-        //                 tx.executeSql('INSERT INTO cities (name, latitude, longitude) VALUES (?, ?, ?)', [
-        //                     weatherData.locationName,
-        //                     weatherData.latitude,
-        //                     weatherData.longitude,
-        //                 ])
-        //             }
-        //             setSaved(true)
-        //         }
-        //     )
-        // })
     }
 
     return (
