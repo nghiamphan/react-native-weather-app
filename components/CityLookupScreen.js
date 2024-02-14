@@ -27,7 +27,6 @@ const CityLookup = () => {
 
     const onFetchWeather = async (city) => {
         const data = await weatherService.fetchWeather(city.latitude, city.longitude)
-        data.locationName = city.title
         setWeatherData(data)
         setSearchedCities([])
     }
