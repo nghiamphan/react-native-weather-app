@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Keyboard, View } from 'react-native'
-import { List, Searchbar } from 'react-native-paper'
+import { Keyboard, ScrollView, StyleSheet, View } from 'react-native'
+import { Divider, List, Searchbar } from 'react-native-paper'
 import Weather from './Weather'
 import weatherService from '../services/weather'
 
@@ -19,8 +19,9 @@ const CityLookup = () => {
                         city.country
                     }`
                 })
+                setSearchedCities(data)
             }
-            setSearchedCities(data)
+
             Keyboard.dismiss()
         }
     }
@@ -40,19 +41,47 @@ const CityLookup = () => {
                 onChangeText={(text) => setQuery(text)}
                 onIconPress={onSearchCity}
                 onSubmitEditing={onSearchCity}
-                style={{ width: 300, alignSelf: 'center' }}
+                onClearIconPress={() => setSearchedCities([])}
+                style={styles.searchbar}
             />
 
-            <List.Section>
-                {searchedCities &&
-                    searchedCities.map((city) => (
-                        <List.Item key={city.id} title={city.title} onPress={() => onFetchWeather(city)} />
-                    ))}
-            </List.Section>
+            {searchedCities.length > 0 && (
+                <ScrollView style={styles.list_section}>
+                    <List.Section>
+                        {searchedCities.map((city) => (
+                            <View key={city.id}>
+                                <List.Item
+                                    key={city.id}
+                                    title={city.title}
+                                    onPress={() => onFetchWeather(city)}
+                                />
+                                <Divider />
+                            </View>
+                        ))}
+                    </List.Section>
+                </ScrollView>
+            )}
             {weatherData && <Weather weatherData={weatherData} />}
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    searchbar: {
+        width: '95%',
+        alignSelf: 'center',
+        borderRadius: 5,
+        backgroundColor: 'lightgray',
+    },
+    list_section: {
+        marginTop: 0,
+        width: '95%',
+        minHeight: 0,
+        maxHeight: 300,
+        alignSelf: 'center',
+        backgroundColor: 'gray',
+    },
+})
 
 export default CityLookup
 

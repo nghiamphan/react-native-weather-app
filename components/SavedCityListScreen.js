@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { ScrollView, View } from 'react-native'
-import { Button, Text } from 'react-native-paper'
+import { ScrollView, StyleSheet, View } from 'react-native'
+import { Button, Divider, Text } from 'react-native-paper'
+
 import { getAllCities, removeCity } from '../db/sqlite'
 import weatherService from '../services/weather'
 
-const SavedCityListScreen = () => {
+const SavedCityListScreen = ({ navigation }) => {
     const [cities, setCities] = useState([])
 
     useEffect(() => {
@@ -23,7 +24,7 @@ const SavedCityListScreen = () => {
         }
 
         fetchCitiesAndWeather()
-    }, [])
+    }, [navigation])
 
     const onRemoveLocation = (city) => {
         removeCity(city.id)
@@ -35,20 +36,60 @@ const SavedCityListScreen = () => {
             {cities.map((city) => {
                 return (
                     <View key={city.id}>
-                        <Text variant="titleLarge">{city.name}</Text>
-                        <Text variant="titleLarge">{city.weather_description}</Text>
-                        <Text variant="titleLarge">
-                            {city.temperature} {city.temperature_units}
-                        </Text>
-                        <Button icon="minus" mode="contained" onPress={() => onRemoveLocation(city)}>
-                            Remove
-                        </Button>
+                        <View style={styles.list_item}>
+                            <View style={[styles.column, styles.columnLeft]}>
+                                <Text variant="titleMedium">{city.name}</Text>
+                                <Text variant="titleMedium">{city.weather_description}</Text>
+                            </View>
+
+                            <View style={[styles.column, styles.columnRight]}>
+                                <Text variant="displaySmall">{city.temperature}°</Text>
+                            </View>
+
+                            <View style={styles.column}>
+                                <Button
+                                    mode="contained"
+                                    onPress={() => onRemoveLocation(city)}
+                                    style={styles.button}
+                                >
+                                    <Text style={styles.buttoneText}>Remove</Text>
+                                </Button>
+                            </View>
+                        </View>
+                        <Divider />
                     </View>
                 )
             })}
         </ScrollView>
     )
 }
+
+const styles = StyleSheet.create({
+    list_item: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        margin: 10,
+    },
+    column: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+    },
+    columnLeft: {
+        width: '50%',
+    },
+    columnRight: {
+        width: '25%',
+    },
+    button: {
+        borderRadius: 5,
+        justifyContent: 'center',
+        backgroundColor: 'red',
+    },
+    buttoneText: {
+        marginLeft: 0,
+        marginRight: 0,
+    },
+})
 
 export default SavedCityListScreen
 

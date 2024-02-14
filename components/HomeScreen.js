@@ -4,7 +4,6 @@ import * as Location from 'expo-location'
 import Weather from './Weather'
 import weatherService from '../services/weather'
 import { createTable } from '../db/sqlite'
-import { View } from 'react-native'
 
 const HomeScreen = () => {
     const [weatherData, setWeatherData] = useState(null)
@@ -32,11 +31,7 @@ const HomeScreen = () => {
         createTable()
     }, [])
 
-    return (
-        <>
-            <Weather weatherData={weatherData} />
-        </>
-    )
+    return <Weather weatherData={weatherData} />
 }
 
 export default HomeScreen
