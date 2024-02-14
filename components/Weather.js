@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Image, View } from 'react-native'
 import { Button, Text } from 'react-native-paper'
-import connectToSqlite from '../db/sqlite'
 import { useFocusEffect } from '@react-navigation/core'
+import { addCity, getCityByName } from '../db/sqlite'
 
 const Weather = ({ weatherData }) => {
     const [saved, setSaved] = useState(false)
@@ -11,44 +11,38 @@ const Weather = ({ weatherData }) => {
         return <View></View>
     }
 
-    const db = connectToSqlite()
-
     useFocusEffect(() => {
-        const checkDb = async () => {
-            db.transaction((tx) => {
-                tx.executeSql(
-                    'SELECT * FROM cities WHERE name = ?',
-                    [weatherData.locationName],
-                    (tx, results) => {
-                        if (results.rows.length > 0) {
-                            setSaved(true)
-                        } else {
-                            setSaved(false)
-                        }
-                    }
-                )
-            })
+        const checkCityExist = async () => {
+            const city = await getCityByName(weatherData.locationName)
+            if (city) {
+                setSaved(true)
+            } else {
+                setSaved(false)
+            }
         }
-        checkDb()
+        checkCityExist()
     })
 
     const onAddLocation = (weatherData) => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                'SELECT * FROM cities WHERE name = ?',
-                [weatherData.locationName],
-                (tx, results) => {
-                    if (results.rows.length === 0) {
-                        tx.executeSql('INSERT INTO cities (name, latitude, longitude) VALUES (?, ?, ?)', [
-                            weatherData.locationName,
-                            weatherData.latitude,
-                            weatherData.longitude,
-                        ])
-                    }
-                    setSaved(true)
-                }
-            )
-        })
+        addCity(weatherData)
+        setSaved(true)
+        // const city = getCityByName(weatherData.locationName)
+        // db.transaction((tx) => {
+        //     tx.executeSql(
+        //         'SELECT * FROM cities WHERE name = ?',
+        //         [weatherData.locationName],
+        //         (tx, results) => {
+        //             if (results.rows.length === 0) {
+        //                 tx.executeSql('INSERT INTO cities (name, latitude, longitude) VALUES (?, ?, ?)', [
+        //                     weatherData.locationName,
+        //                     weatherData.latitude,
+        //                     weatherData.longitude,
+        //                 ])
+        //             }
+        //             setSaved(true)
+        //         }
+        //     )
+        // })
     }
 
     return (

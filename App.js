@@ -10,7 +10,7 @@ import Weather from './components/Weather'
 import weatherService from './services/weather'
 import CityLookupScreen from './components/CityLookupScreen'
 import SavedCityListScreen from './components/SavedCityListScreen'
-import connectToSqlite from './db/sqlite'
+import { createTable } from './db/sqlite'
 
 const Stack = createNativeStackNavigator()
 
@@ -37,13 +37,7 @@ export default function App() {
     }, [])
 
     useEffect(() => {
-        const db = connectToSqlite()
-
-        db.transaction((tx) => {
-            tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS cities (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, latitude REAL, longitude REAL)'
-            )
-        })
+        createTable()
     }, [])
 
     const HomeScreen = (props) => {
