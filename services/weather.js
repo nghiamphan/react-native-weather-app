@@ -1,3 +1,4 @@
+import * as Location from 'expo-location'
 import wmo_weather_code from '../db/wmo_weather_code.json'
 
 const fetchCities = async (query) => {
@@ -22,7 +23,10 @@ const fetchWeather = async (latitude, longitude) => {
         data.weather_icon_url = wmo_weather_code[data.current_weather.weathercode].night.image
     }
 
-    console.log(data)
+    const positions = await Location.reverseGeocodeAsync({ latitude, longitude })
+    const position = positions[0]
+    position.region = position.region && position.region !== undefined ? position.region + ', ' : ''
+    data.locationName = `${position.city}, ${position.region}${position.country}`
 
     return data
 }
