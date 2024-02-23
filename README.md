@@ -11,7 +11,7 @@ npm install
 If there is an error or npm fails to install, try:
 
 ```
-npm install --force
+npm install --legacy-peer-deps
 ```
 
 To run:
